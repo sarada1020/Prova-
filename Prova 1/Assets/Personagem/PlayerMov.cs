@@ -12,10 +12,27 @@ public class PlayerMov : MonoBehaviour
     public Vector3 spawnAreaMin; // Posição mínima (inferior) da área de spawn
     public Vector3 spawnAreaMax; // Posição máxima (superior) da área de spawn
 
+    // Áudio
+    public AudioClip coletaAudio;  // Som de coleta da bola
+    public AudioClip musicaFundo;  // Música de fundo
+    private AudioSource audioSource;  // Fonte de áudio para efeitos (coleta)
+    private AudioSource musicaFundoSource;  // Fonte de áudio para a música de fundo
+
+    private bool coletaAudioTocando = false;  // Flag para garantir que o som de coleta não sobreponha
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();  // Obtém o Rigidbody para controlar a física
         controlador = GetComponent<Animator>();  // Obtém o Animator para controlar animações
+
+        // Inicializando o AudioSource para os efeitos (coleta)
+        audioSource = GetComponent<AudioSource>();  // Fonte de áudio para efeitos (coleta)
+        musicaFundoSource = gameObject.AddComponent<AudioSource>();  // Fonte de áudio para a música de fundo
+
+        // Tocar música de fundo continuamente
+        musicaFundoSource.clip = musicaFundo;
+        musicaFundoSource.loop = true;  // Faz a música de fundo tocar em loop
+        musicaFundoSource.Play();  // Inicia a música de fundo
     }
 
     void Update()
@@ -38,27 +55,38 @@ public class PlayerMov : MonoBehaviour
             Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
             // Faz a rotação do personagem de forma suave
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotateSpeed * Time.deltaTime);
-        }
 
-        // Controle de animações
-        if (movement.magnitude > 0)
-        {
             controlador.SetTrigger("Anda");  // Ativa a animação de "anda" se o personagem estiver se movendo
         }
         else
         {
-            controlador.SetTrigger("Parado");  // Ativa a animação de "parado" se o personagem estiver parado
+            controlador.SetTrigger("Parado");  // Ativa a animação de "parado"
         }
     }
 
-// Esse método será chamado quando o player colidir com a bola
-void OnTriggerEnter(Collider other)
+    // Esse método será chamado quando o player colidir com a bola
+    void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Diamante"))
         {
             Destroy(other.gameObject);  // Destrói a bola coletada
             Spawnar();  // Gera uma nova bola em uma posição aleatória dentro da área
+
+            // Toca o som da coleta da bola
+            if (!coletaAudioTocando)  // Verifica se o som de coleta já está tocando
+            {
+                audioSource.PlayOneShot(coletaAudio);  // Toca o áudio de coleta
+                coletaAudioTocando = true;
+                StartCoroutine(ResetarColetaAudio());  // Reseta a flag depois que o som terminar
+            }
         }
+    }
+
+    // Função para resetar a flag de som de coleta após o som terminar
+    private IEnumerator ResetarColetaAudio()
+    {
+        yield return new WaitForSeconds(coletaAudio.length);  // Espera o tempo do áudio
+        coletaAudioTocando = false;  // Permite que o som de coleta seja tocado novamente
     }
 
     // Função para spawnar uma nova bola em uma área aleatória
@@ -73,4 +101,3 @@ void OnTriggerEnter(Collider other)
         Instantiate(bola, spawnPos, Quaternion.identity);
     }
 }
-
