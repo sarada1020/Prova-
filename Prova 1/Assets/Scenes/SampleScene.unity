@@ -1141,6 +1141,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2275874314738663053, guid: 7b2407b7153db8f4f812e64272af7d74, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2275874314738663053, guid: 7b2407b7153db8f4f812e64272af7d74, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2275874314738663053, guid: 7b2407b7153db8f4f812e64272af7d74, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9089695016490303198, guid: 7b2407b7153db8f4f812e64272af7d74, type: 3}
       propertyPath: m_Name
       value: Bola (1)
